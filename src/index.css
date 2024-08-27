@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+header span{
+    @apply p-2 rounded-t-md ease-linear duration-300 hover:text-blue-900 hover:underline-offset-2 hover:underline;
+}
