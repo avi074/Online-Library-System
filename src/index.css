@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-header span{
-    @apply p-2 rounded-t-md ease-linear duration-300 hover:text-blue-900 hover:underline-offset-2 hover:underline;
+header span {
+    @apply w-full p-2 rounded-t-md ease-linear duration-300 hover:text-blue-900 hover:underline-offset-2 hover:underline;
+}
+
+body {
+    @apply bg-gray-50;
+}
+
+.categ-link {
+    @apply rounded-lg border-2 border-black px-4 py-2 w-full text-center capitalize font-semibold shadow-lg duration-500 hover:bg-blue-200 hover:border-blue-600 hover:-translate-y-1 hover:shadow-blue-300 hover:drop-shadow-lg;
 }
