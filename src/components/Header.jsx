@@ -3,13 +3,15 @@ import { Link } from "react-router-dom"
 
 function Header() {
   return (
-    <header className='p-3 mb-4 flex justify-between items-center border-b-2 border-orange-700'>
-      <Link to='/home'>
-        <Typography variant='h3' color='blue' className='italic md:underline'>
-          Online Library System
-        </Typography>
-      </Link>
-      <div className='w-1/2 flex justify-around text-lg font-semibold'>
+    <header className='p-3 mb-4 flex flex-col sm:flex-row items-center border-b-2 border-orange-700'>
+      <div id="web-logo" className="w-full">
+        <Link to='/home'>
+          <Typography variant='h3' color='blue' className='italic md:underline'>
+            Online Library System
+          </Typography>
+        </Link>
+      </div>
+      <div id="nav-links" className='w-full flex justify-end gap-3 items-center text-lg font-semibold'>
         <Link to='/home'>
           <span>Home</span>
         </Link>

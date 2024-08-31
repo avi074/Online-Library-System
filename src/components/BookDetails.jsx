@@ -1,18 +1,23 @@
+import { Button } from "@material-tailwind/react"
 import { useEffect } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 function BookDeatils() {
   const { category, id } = useParams()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    
-  }, [category, id, navigate])
+  useEffect(() => {}, [category, id, navigate])
 
   return (
     <>
-      <h1>Hello Book {id}</h1>
-      <Link to={`/books/${category}`}>Back to Browse books</Link>
+      <Button
+        variant='gradient'
+        color='blue'
+        onClick={() => {
+          navigate(`/books/${category}`)
+        }}>
+        Back to Browse
+      </Button>
     </>
   )
 }
