@@ -1,24 +1,23 @@
 # [Online Library System]()
-This is my first React App. It's a simple ToDo List application that lets you create tasks, updates them & marks them as per user's input.
 
+It's a simple library simulation react app where i used redux toolkit to improve my understanding of react-redux app.
 
 ## Prerequisites
 
 Before you start, ensure you have Node.js installed on your machine. If not, you can download and install it from [here](https://nodejs.org/).
-
 
 ## Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/avi074/TODO-APP.git
+git clone https://github.com/avi074/Online-Library-System.git
 ```
 
 2. Navigate into the project directory:
 
 ```bash
-cd TODO-APP
+cd Online-Library-System
 ```
 
 3. Install dependencies:
@@ -45,10 +44,11 @@ npm run build
 
 - `public/` : Contains your public files.
 
-- `src/` : Contains your JSX/Source files 
-    - `assets/` : Assets
-    - `components/` : React Components
-    - `utils/` : Utilities
+- `src/` : Contains your JSX/Source files
+
+  - `assets/` : Assets
+  - `components/` : React Components
+  - `utils/` : Utilities & Redux Store
 
 - `index.html` : Index HTML file
 

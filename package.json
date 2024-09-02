@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/avi074/Online-Library-System.git",
+    "type": "public"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
