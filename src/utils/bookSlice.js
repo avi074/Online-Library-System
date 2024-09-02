@@ -7,10 +7,21 @@ const bookSlice = createSlice({
     allBooks: booksObj,
     books: [],
     newlyAdded: [],
+    popular: [],
     category: categoryObj,
-    currCateg: "",
+    currCateg: "all",
   },
   reducers: {
+    setPopularBooksAboveRating: (state, action) => {
+      const rating = action.payload
+      state.popular.length = 0
+      Object.keys(state.allBooks).map((ele) => {
+        if (state.allBooks[ele].rating > rating) {
+          state.popular.push(ele)
+        }
+      })
+    },
+
     setCurrentCategoryAndBooks: (state, action) => {
       state.currCateg = action.payload
       if (state.currCateg === "all") {
@@ -21,29 +32,28 @@ const bookSlice = createSlice({
     },
 
     addBookToLibrary: (state, action) => {
-      state.books.push(action.payload)
-    },
-
-    searchAndUpdateBooks: (
-      { allBooks, books },
-      { payload: { searchCateg, searchVal } },
-    ) => {
-      console.log(searchCateg, searchVal)
-      console.log(
-        books.filter((ele) =>
-          allBooks[ele][searchCateg]
-            .toLowerCase()
-            .includes(searchVal.toLowerCase()),
-        ),
-      )
+      const { isbn, ...book } = action.payload
+      if (!state.allBooks[isbn]) {
+        state.allBooks[isbn] = book // Object.assign(state.allBooks, {isbn: book})
+        state.newlyAdded.push(isbn)
+        for (const categ of book.category) {
+          if (state.category[categ]) {
+            state.category[categ].push(isbn)
+          } else {
+            state.category[categ] = [isbn]
+          }
+        }
+      }else{
+        throw new Error(`Book ${isbn} Already Exists !!!`)
+      }
     },
   },
 })
 
 export const {
+  setPopularBooksAboveRating,
   setCurrentCategoryAndBooks,
   addBookToLibrary,
-  searchAndUpdateBooks,
 } = bookSlice.actions
 
 export default bookSlice.reducer
