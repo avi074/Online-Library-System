@@ -3,44 +3,85 @@ import {
   Typography,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Input,
   Checkbox,
-  Alert,
   Textarea,
 } from "@material-tailwind/react"
-import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router"
+import { addBookToLibrary } from "../utils/bookSlice"
 
 function AddBook() {
   const initialData = {
     isbn: "",
     title: "",
     author: "",
-    rating: 0,
+    rating: "",
     image: "",
     description: "",
     category: [],
   }
-  const [formData, setFormData] = useState(initialData)
-  const [openAlert, setOpenAlert] = useState(true)
-  const navigate = useNavigate()
-  const { category, currCateg, books } = useSelector((store) => store.library)
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setOpenAlert(false)
-    }, 3000)
-    if (!openAlert) clearTimeout(timeout)
-  }, [openAlert])
+  const [formData, setFormData] = useState(initialData)
+  const inputsData = [
+    {
+      type: "text",
+      name: "isbn",
+      label: "Book ISBN",
+      minLength: 10,
+      maxLength: 14,
+    },
+    {
+      type: "text",
+      name: "title",
+      label: "Book Title",
+    },
+    {
+      type: "text",
+      name: "author",
+      label: "Book Author",
+    },
+    {
+      type: "number",
+      name: "rating",
+      min: 0,
+      max: 5,
+      step: 0.01,
+      label: "Book Ratings",
+    },
+    {
+      type: "url",
+      name: "image",
+      label: "Book Cover Image Link",
+      pattern: "https://.*",
+      containerProps: {
+        className: "xl:col-span-2",
+      },
+    },
+  ]
+  const [errorMsg, setErrorMsg] = useState({})
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { category, currCateg } = useSelector((store) => store.library)
 
   const updateFormData = (name, value) =>
-    setFormData({ ...formData, [name]: value })
+    setFormData((formD) => ({ ...formD, [name]: value }))
 
-  const handleChange = ({ target: { name, value } }) =>
+  const updateErrorMsg = (name, value) =>
+    setErrorMsg((err) => ({ ...err, [name]: value }))
+
+  /**
+   *
+   * @param {React.FormEvent<HTMLInputElement | HTMLTextAreaElement>} e
+   */
+  const handleChange = ({ target: { name, value } }) => {
     updateFormData(name, value)
+    if (errorMsg[name]) {
+      updateErrorMsg(name, "")
+    }
+  }
 
   const handleCheckBoxes = ({ target: { name, value } }) => {
     console.log(name, value)
@@ -50,29 +91,69 @@ function AddBook() {
     } else {
       arr.push(value)
     }
+    if (errorMsg[name]) {
+      updateErrorMsg(name, "")
+    }
     updateFormData(name, arr)
   }
 
-  const handleSubmit = () => {
-    console.log(formData, currCateg, category, books)
-    // navigate(`/books/${currCateg}`)
+  /**
+   *
+   * @param {React.FormEvent<HTMLInputElement | HTMLTextAreaElement>} e
+   */
+  const handleInvalid = ({ target, currentTarget }) => {
+    let err = ""
+    let name = target.name
+
+    if (currentTarget.validity.valueMissing) {
+      err = `Fill in the ${name.toUpperCase()} field !!!`
+    } else if (currentTarget.validity.patternMismatch) {
+      err = `Pattern Mismatch!, Follow this : '${currentTarget.pattern}' !!!`
+    } else if (
+      currentTarget.validity.rangeUnderflow ||
+      currentTarget.validity.rangeOverflow
+    ) {
+      err = `Input range is in between [${currentTarget.min},${currentTarget.max}] !!!`
+    } else if (
+      currentTarget.validity.tooLong ||
+      currentTarget.validity.tooShort
+    ) {
+      err = `Input's length must be ${currentTarget.minLength} - ${currentTarget.maxLength} chars !!!`
+    }
+
+    if (formData.category.length == 0) {
+      updateErrorMsg("category", "Choose at least 1 category !!!")
+    }
+    updateErrorMsg(name, err)
   }
 
-  const handleReset = () => setFormData(initialData)
+  /**
+   *
+   * @param {React.FormEvent<HTMLFormEvent>} e
+   */
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    try {
+      if (e.currentTarget.checkValidity()) {
+        console.log("Valid", e.currentTarget)
+        dispatch(addBookToLibrary(formData))
+        navigate(`/books/${currCateg}`)
+      } else {
+        console.log("Invalid", e.currentTarget)
+      }
+    } catch (e) {
+      alert(e)
+      console.error(e)
+    }
+  }
+
+  const handleReset = () => {
+    setFormData(initialData)
+    setErrorMsg({})
+  }
 
   return (
     <>
-      <Alert
-        variant='ghost'
-        open={openAlert}
-        onClose={() => {
-          setOpenAlert(false)
-        }}
-        color='red'
-        className='fixed w-1/2 z-10 top-0 left-1/2 -translate-x-1/2'>
-        <Typography variant='h6'>Info</Typography>
-      </Alert>
-
       <Card className='md:w-3/4 xl:w-3/5 mx-auto mb-4' color='transparent'>
         <CardHeader
           floated={false}
@@ -87,88 +168,82 @@ function AddBook() {
           </Typography>
         </CardHeader>
 
-        <CardBody className='flex flex-col justify-center gap-4 text-black'>
-          <div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
-            <Input
-              type='text'
-              name='title'
-              value={formData.title}
-              onChange={handleChange}
-              label='Book Title'
-            />
-            <Input
-              type='text'
-              name='author'
-              value={formData.author}
-              onChange={handleChange}
-              label='Book Author'
-            />
-            <Input
-              type='text'
-              name='isbn'
-              value={formData.isbn}
-              onChange={handleChange}
-              label='Book ISBN'
-            />
-            <Input
-              type='number'
-              name='rating'
-              min={0}
-              max={5}
-              step={0.01}
-              value={formData.rating}
-              onChange={handleChange}
-              label='Book Rating'
-            />
-            <Input
-              type='url'
-              name='image'
-              value={formData.image}
-              onChange={handleChange}
-              label='Book Cover Image Link'
-              containerProps={{
-                className: "xl:col-span-2",
-              }}
-            />
-          </div>
-          <Textarea
-            label='Enter the Book Description'
-            name='description'
-            value={formData.description}
-            onChange={handleChange}></Textarea>
-          <fieldset>
-            <Typography variant='h6' color='gray'>
-              Choose book categories:
-            </Typography>
-            <div
-              id='categ-options'
-              className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-              {Object.keys(category).map((categ) => (
-                <Checkbox
-                  key={categ}
-                  name='category'
-                  checked={formData.category.includes(categ)}
-                  onChange={handleCheckBoxes}
-                  value={categ}
-                  label={categ}
-                />
+        <CardBody>
+          <form
+            method='post'
+            onSubmit={handleSubmit}
+            onReset={handleReset}
+            className='flex flex-col justify-center gap-4 text-black'>
+            <div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
+              {inputsData.map((ele, index) => (
+                <div key={`input-${index}`} {...ele.containerProps}>
+                  <Input
+                    {...ele}
+                    value={formData[ele.name]}
+                    onChange={handleChange}
+                    onInvalid={handleInvalid}
+                    required
+                  />
+                  {errorMsg[ele.name] && (
+                    <p className='text-sm font-semibold px-1 line-clamp-1 text-red-700'>
+                      {errorMsg[ele.name]}
+                    </p>
+                  )}
+                </div>
               ))}
             </div>
-          </fieldset>
+            <div>
+              <Textarea
+                label='Enter the Book Description'
+                name='description'
+                value={formData.description}
+                onChange={handleChange}
+                onInvalid={handleInvalid}
+                required></Textarea>
+              {errorMsg["description"] && (
+                <p className='text-sm font-semibold px-1 line-clamp-1 text-red-700'>
+                  {errorMsg["description"]}
+                </p>
+              )}
+            </div>
+            <fieldset>
+              <Typography variant='h6' color='gray'>
+                Choose book categories:
+                {errorMsg["category"] && (
+                  <p className='text-sm font-semibold px-1 line-clamp-1 text-red-700'>
+                    {errorMsg["category"]}
+                  </p>
+                )}
+              </Typography>
+              <div
+                id='categ-options'
+                className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+                {Object.keys(category).map((categ) => (
+                  <Checkbox
+                    key={categ}
+                    name='category'
+                    checked={formData.category.includes(categ)}
+                    onChange={handleCheckBoxes}
+                    value={categ}
+                    label={categ}
+                  />
+                ))}
+              </div>
+            </fieldset>
+            <fieldset className='flex gap-4 items-center justify-evenly pt-0'>
+              <Button color='green' type='submit' className='border-2'>
+                Submit
+              </Button>
+              <Button
+                variant='text'
+                color='red'
+                className='border-2 border-red-600'
+                type='reset'>
+                Reset
+              </Button>
+            </fieldset>
+          </form>
         </CardBody>
-
-        <CardFooter className='flex gap-4 items-center justify-evenly pt-0'>
-          <Button color='green' className='border-2' onClick={handleSubmit}>
-            Submit
-          </Button>
-          <Button
-            variant='text'
-            color='red'
-            className='border-2 border-red-600'
-            onClick={handleReset}>
-            Reset
-          </Button>
-        </CardFooter>
       </Card>
     </>
   )

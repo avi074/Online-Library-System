@@ -13,3 +13,19 @@ body {
 .categ-link {
     @apply rounded-lg border-2 border-black px-4 py-2 w-full text-center capitalize font-semibold shadow-lg duration-500 hover:bg-blue-200 hover:border-blue-600 hover:-translate-y-1 hover:shadow-blue-300 hover:drop-shadow-lg;
 }
+
+.categ-span{
+    @apply my-2 mr-2 px-2 py-1 inline-block uppercase tracking-wider border rounded-full text-gray-100 bg-blue-gray-600;
+}
+
+hr{
+    @apply h-0.5 bg-black;
+}
+
+.book-info span:first-child{
+ @apply font-semibold uppercase;
+}
+
+.book-info span:last-child{
+    @apply text-[rgb(95_97_177)] ;
+}

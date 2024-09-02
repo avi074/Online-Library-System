@@ -1,13 +1,15 @@
 import { Typography } from "@material-tailwind/react"
 import { Link } from "react-router-dom"
+import libraryIcon from "/library.svg"
 
 function Header() {
   return (
-    <header className='p-3 mb-4 flex flex-col sm:flex-row items-center border-b-2 border-orange-700'>
+    <header className='p-3 mb-4 flex flex-col md:flex-row items-center border-b-2 border-orange-700'>
       <div id="web-logo" className="w-full">
         <Link to='/home'>
-          <Typography variant='h3' color='blue' className='italic md:underline'>
-            Online Library System
+          <Typography variant='h4' color='blue' className='flex'>
+          <img src={libraryIcon} alt="" width={32} /> 
+          <span className='italic md:underline'>Online Library System</span>
           </Typography>
         </Link>
       </div>

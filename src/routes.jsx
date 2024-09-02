@@ -1,10 +1,14 @@
-import App from "./App"
-import Home from "./components/Home"
 import { createBrowserRouter, Navigate } from "react-router-dom"
+import { lazy, Suspense } from "react"
+import App from "./App"
+import Loading from "./components/Loading"
 import NotFound from "./components/NotFound"
-import AddBook from "./components/AddBook"
-import BrowseBooks from "./components/BrowseBooks"
-import BookDeatils from "./components/BookDetails"
+
+// const App = lazy(() => import("./App"))
+const Home = lazy(() => import("./components/Home"))
+const AddBook = lazy(() => import("./components/AddBook"))
+const BrowseBooks = lazy(() => import("./components/BrowseBooks"))
+const BookDetails = lazy(() => import("./components/BookDetails"))
 
 const routes = createBrowserRouter([
   {
@@ -18,19 +22,35 @@ const routes = createBrowserRouter([
       },
       {
         path: "home",
-        element: <Home />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <Home />
+          </Suspense>
+        ),
       },
       {
         path: "books/:category",
-        element: <BrowseBooks />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <BrowseBooks />
+          </Suspense>
+        ),
       },
       {
         path: "books/:category/:id",
-        element: <BookDeatils />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <BookDetails />
+          </Suspense>
+        ),
       },
       {
         path: "addBook",
-        element: <AddBook />,
+        element: (
+          <Suspense fallback={<Loading />}>
+            <AddBook />
+          </Suspense>
+        ),
       },
     ],
   },

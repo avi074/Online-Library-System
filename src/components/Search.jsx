@@ -41,7 +41,7 @@ function Search({ category = null, searchHandler }) {
           value={searchCateg}
           onChange={(val) => setSearchCateg(val)}
           containerProps={{
-            className: "min-w-fit lg:w-1/3",
+            className: "min-w-fit md:w-1/3",
           }}>
           {options}
         </Select>
